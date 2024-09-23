@@ -26,9 +26,7 @@ def upgrade() -> None:
         sa.Column("created_date", sa.DateTime(), nullable=False),
         sa.Column(
             "status",
-            sa.Enum(
-                "в процессе", "отправлен", "доставлен", name="order_status"
-            ),
+            sa.Enum("в процессе", "отправлен", "доставлен", name="order_status"),
             nullable=False,
         ),
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
