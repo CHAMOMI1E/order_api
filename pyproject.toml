@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "task"
+version = "0.1.0"
+description = ""
+authors = ["CHAMOMILE <CHAMOM2LES@outlook.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.115.0"
+sqlalchemy = "^2.0.35"
+aiogram = "3.6.0"
+psycopg2-binary = "^2.9.9"
+asyncpg = "^0.29.0"
+uvicorn = "^0.30.6"
+alembic = "^1.13.2"
+python-dotenv = "^1.0.1"
+black = "^24.8.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+requests = "^2.32.3"
+slowapi = "^0.1.9"
+fastapi-jwt = "^0.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
