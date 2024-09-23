@@ -9,8 +9,7 @@ from app.db.models.product import Product
 class Order(Base):
     __tablename__ = "order"
 
-    created_date: Mapped[datetime] = mapped_column(default=datetime.now, nullable=False
-    )
+    created_date: Mapped[datetime] = mapped_column(default=datetime.now, nullable=False)
     status: Mapped[Enum] = mapped_column(
         Enum("в процессе", "отправлен", "доставлен", name="order_status"),
         nullable=False,

@@ -3,8 +3,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from config import DB_TOKEN
 
-engine = create_async_engine(DB_TOKEN,
-                             echo=False)
+engine = create_async_engine(DB_TOKEN, echo=False)
 
 async_session = async_sessionmaker(engine, expire_on_commit=False)
 
