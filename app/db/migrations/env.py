@@ -6,7 +6,6 @@ from sqlalchemy import pool
 from alembic import context
 
 from config import DB_TOKEN
-from app.db import *
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,6 +23,7 @@ config.set_main_option("sqlalchemy.url", DB_TOKEN + "?async_fallback=True")
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+from app.db import *
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
