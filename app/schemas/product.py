@@ -13,9 +13,6 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
-    class Config:
-        orm_mode = True
-
 
 class ProductUpdate(ProductBase):
     name: Optional[str] = None
@@ -27,12 +24,6 @@ class ProductUpdate(ProductBase):
 class Product(ProductBase):
     id: int
 
-    class Config:
-        orm_mode = True
-
 
 class ProductList(BaseModel):
     products: List[Product]
-
-    class Config:
-        orm_mode = True

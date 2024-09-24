@@ -1,6 +1,8 @@
 from sqlalchemy import insert, update, delete, select
 from app.db import Product, db_session
-from app.schemas.product import ProductCreate
+from app.schemas.product import ProductCreate, ProductUpdate
+from dataclasses import asdict
+
 
 
 async def create_product(
@@ -11,8 +13,8 @@ async def create_product(
         product = await session.execute(
             insert(Product)
             .values(**model.dict())            
-            .returning(Product.id, Product.name, Product.description, Product.price, Product.stock)
         )
+        await session.commit()
         return {"message": "Product created successfully"}
     except Exception as e:
         print(e)
@@ -20,37 +22,45 @@ async def create_product(
 
 
 async def get_products(session: db_session):
-    query = select(Product)
-    result = await session.execute(query)
-    return result.fetchall()
+    products_query = await session.execute(select(Product))
+    products = products_query.scalars().all()
+    result = []
+    for product in products:
+        result.append({
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "stock": product.stock
+        })
+    return result
 
 
-async def get_product_by_id(session: db_session, product_id: int) -> Product:
+async def get_product_by_id(session: db_session, product_id: int) -> dict:
     query = select(Product).where(Product.id == product_id)
-    result = await session.execute(query)
-    return result.fetchone()
+    product = (await session.execute(query)).scalar_one()
+    return {
+            "id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "price": product.price,
+            "stock": product.stock
+        }
 
 
-async def get_product_by_id(session: db_session, product_id: int):
-    query = select(Product).where(Product.id == product_id)
-    result = await session.execute(query)
-    return result.fetchone()
 
-
-async def update_product(session: db_session, product_id: int, stock: int):
+async def update_product(session: db_session, product_id: int, model: ProductUpdate):
     try:
-        product = await get_product_by_id(session=session, product_id=product_id)
-        if product.stock >= stock:
-            result = await session.execute(
-                update(Product).where(Product.id == product_id).values(stock=stock)
-            )
-            print(result)
-            return True
-        else:
-            return False
+        product = await session.execute(
+                                        update(Product)
+                                        .where(Product.id == product_id)
+                                        .values(**model.dict())
+                                        )
+        await session.commit()
+        return {"message": "Product updated successfully"}
     except Exception as e:
         print(e)
-        return False
+        return {"message": "Product not updated successfully"}
 
 
 async def delete_product(session: db_session, product_id: int):
