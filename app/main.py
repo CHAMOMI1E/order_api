@@ -1,15 +1,16 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-from app.routers import product
+from app.routers import product, order
 
 app = FastAPI()
 
 app.include_router(product.product_router, prefix="/products", tags=["products"])
+app.include_router(order.order_router, prefix="/order", tags=["order"])
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Start complite"}
 
 
 @app.exception_handler(HTTPException)

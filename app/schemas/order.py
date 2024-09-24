@@ -5,7 +5,7 @@ from typing import List
 
 class OrderItemBase(BaseModel):
     product_id: int
-    quantity: int = Field(..., gt=0)
+    stock: int = Field(..., gt=0)
 
 
 class OrderItemCreate(OrderItemBase):

@@ -13,6 +13,9 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+    class Config:
+        orm_mode = True
+
 
 class ProductUpdate(ProductBase):
     name: Optional[str] = None
