@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from app.db.models.base import db_session
-from app.db.requests.order import create_order
-from app.schemas.order import OrderBase, OrderCreate, OrderStatusUpdate
+from app.db.requests.order import create_order, get_order_by_id, get_orders, update_order_status
+from app.schemas.order import OrderCreate, OrderStatusUpdate
 from sqlalchemy.orm import Session 
 
 
@@ -15,15 +15,18 @@ async def create_order_endpoint(model: OrderCreate, db: Session=Depends(db_sessi
 
 
 @order_router.get("/")
-async def get_orders_endpoint():
-    pass
+async def get_orders_endpoint(db: Session=Depends(db_session)):
+    result = await get_orders(session=db)
+    return result
 
 
-@order_router.get("/{id}", response_model=OrderStatusUpdate)
-async def get_order_by_id_endpoint(id: int):
-    pass
+@order_router.get("/{id}")
+async def get_order_by_id_endpoint(id: int, db: Session=Depends(db_session)):
+    result = await get_order_by_id(session=db, order_id=id)
+    return result
 
 
 @order_router.patch("/{id}/status")
-async def update_order_status_endpoint(model: OrderBase, id: int):
-    return {"message": "done"}
+async def update_order_status_endpoint(id: int, model: OrderStatusUpdate, db: Session=Depends(db_session)):
+    result = await update_order_status(order_id=id, new_status=model.status, session=db)
+    return result

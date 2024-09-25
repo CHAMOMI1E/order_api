@@ -19,11 +19,3 @@ class ProductUpdate(ProductBase):
     description: Optional[str] = None
     price: Optional[float] = None
     stock: Optional[int] = None
-
-
-class Product(ProductBase):
-    id: int
-
-
-class ProductList(BaseModel):
-    products: List[Product]
