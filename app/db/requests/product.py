@@ -4,16 +4,9 @@ from app.schemas.product import ProductCreate, ProductUpdate
 from dataclasses import asdict
 
 
-
-async def create_product(
-    session: db_session, 
-    model: ProductCreate
-):
+async def create_product(session: db_session, model: ProductCreate):
     try:
-        product = await session.execute(
-            insert(Product)
-            .values(**model.dict())            
-        )
+        product = await session.execute(insert(Product).values(**model.dict()))
         await session.commit()
         return {"message": "Product created successfully"}
     except Exception as e:
@@ -26,13 +19,15 @@ async def get_products(session: db_session):
     products = products_query.scalars().all()
     result = []
     for product in products:
-        result.append({
-            "id": product.id,
-            "name": product.name,
-            "description": product.description,
-            "price": product.price,
-            "stock": product.stock
-        })
+        result.append(
+            {
+                "id": product.id,
+                "name": product.name,
+                "description": product.description,
+                "price": product.price,
+                "stock": product.stock,
+            }
+        )
     return result
 
 
@@ -40,13 +35,12 @@ async def get_product_by_id(session: db_session, product_id: int) -> dict:
     query = select(Product).where(Product.id == product_id)
     product = (await session.execute(query)).scalar_one()
     return {
-            "id": product.id,
-            "name": product.name,
-            "description": product.description,
-            "price": product.price,
-            "stock": product.stock
-        }
-
+        "id": product.id,
+        "name": product.name,
+        "description": product.description,
+        "price": product.price,
+        "stock": product.stock,
+    }
 
 
 async def update_product(session: db_session, product_id: int, model: ProductUpdate):
@@ -56,10 +50,8 @@ async def update_product(session: db_session, product_id: int, model: ProductUpd
             if value is not None:
                 final_model[key] = value
         product = await session.execute(
-                                        update(Product)
-                                        .where(Product.id == product_id)
-                                        .values(**final_model)
-                                        )
+            update(Product).where(Product.id == product_id).values(**final_model)
+        )
         await session.commit()
         return {"message": "Product updated successfully"}
     except Exception as e:

@@ -61,7 +61,6 @@ async def create_order(session: db_session, model: OrderCreate) -> dict:
         return {"error": f"Order creation failed: {e}"}
 
 
-
 async def get_orders(session: db_session) -> dict:
     try:
         result = await session.execute(
@@ -76,19 +75,16 @@ async def get_orders(session: db_session) -> dict:
                 "created_date": order.created_date,
                 "status": order.status,
                 "items": [
-                    {
-                        "product_id": item.product_id,
-                        "quantity": item.quantity
-                    }
+                    {"product_id": item.product_id, "quantity": item.quantity}
                     for item in order.order_items
-                ]
+                ],
             }
             orders_list.append(order_dict)
 
         return {"orders": orders_list}
 
     except Exception as e:
-        return {'message': f"Error fetching orders: {e}"}
+        return {"message": f"Error fetching orders: {e}"}
 
 
 async def get_order_by_id(session: db_session, order_id: int) -> dict:
@@ -101,25 +97,22 @@ async def get_order_by_id(session: db_session, order_id: int) -> dict:
         order = result.scalar_one_or_none()
 
         if order is None:
-            return {'error': f"Order with ID {order_id} not found"}
+            return {"error": f"Order with ID {order_id} not found"}
 
         order_dict = {
             "id": order.id,
             "created_date": order.created_date,
             "status": order.status,
             "items": [
-                {
-                    "product_id": item.product_id,
-                    "quantity": item.quantity
-                }
+                {"product_id": item.product_id, "quantity": item.quantity}
                 for item in order.order_items
-            ]
+            ],
         }
 
         return order_dict
 
     except Exception as e:
-        return {'error': f"Error fetching order: {e}"}
+        return {"error": f"Error fetching order: {e}"}
 
 
 async def update_order_status(
@@ -142,12 +135,15 @@ async def update_order_status(
 
         await session.commit()
 
-        return {"message": "Order status updated successfully", "order_id": updated_order_id}
+        return {
+            "message": "Order status updated successfully",
+            "order_id": updated_order_id,
+        }
 
     except NoResultFound:
         await session.rollback()
         return {"error": f"Order with ID {order_id} not found"}
-    
+
     except Exception as e:
         await session.rollback()
         return {"error": f"Error updating order status: {e}"}

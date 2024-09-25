@@ -11,6 +11,7 @@ class OrderItemBase(BaseModel):
 class OrderItemCreate(OrderItemBase):
     pass
 
+
 class OrderBase(BaseModel):
     status: Optional[str] = "в процессе"
 

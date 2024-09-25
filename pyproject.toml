@@ -16,11 +16,6 @@ uvicorn = "^0.30.6"
 alembic = "^1.13.2"
 python-dotenv = "^1.0.1"
 black = "^24.8.0"
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-requests = "^2.32.3"
-slowapi = "^0.1.9"
-fastapi-jwt = "^0.3.0"
 
 
 [build-system]
