@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.models.base import db_session
-from app.db.requests.product import get_product_by_id, get_products, create_product, update_product
+from app.db.requests.product import delete_product, get_product_by_id, get_products, create_product, update_product
 from app.schemas.product import ProductCreate, ProductUpdate
 
 
@@ -33,14 +33,15 @@ async def get_product_by_id_endpoint(id, db: Session=Depends(db_session)):
 
 
 @product_router.put("/{id}")
-async def update_product_func(id: int, model: ProductUpdate, db: Session=Depends(db_session)):
+async def update_product_endpoint(id: int, model: ProductUpdate, db: Session=Depends(db_session)):
     result = await update_product(session=db, product_id=id, model=model)
     return result
 
 
 @product_router.delete("/{id}")
-async def delete_product(id):
-    pass
+async def delete_product_endpoint(id: int, db: Session=Depends(db_session)):
+    result = await delete_product(session=db, product_id=id)
+    return result
 
 
 

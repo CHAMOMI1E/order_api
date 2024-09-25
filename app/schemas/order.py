@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 
 class OrderItemBase(BaseModel):
@@ -21,7 +21,7 @@ class OrderItem(OrderItemBase):
 
 
 class OrderBase(BaseModel):
-    status: str = "в процессе"
+    status: Optional[str] = "в процессе"
 
 
 class OrderCreate(OrderBase):

@@ -1,20 +1,63 @@
 from typing import Literal
-from sqlalchemy import insert, update, delete, select
+from sqlalchemy import insert, update, select
+from sqlalchemy.exc import NoResultFound
 from app.db import Order, OrderItem, db_session
+from app.db.models.product import Product
 from app.db.requests.product import get_product_by_id
+from app.schemas.order import OrderCreate
 
 
-async def create_order(product_id: int, quantity: int, session: db_session):
+async def create_order(session: db_session, model: OrderCreate):
     try:
-        product = await get_product_by_id(product_id=product_id)
-
-        result = await session.execute(insert(Order).values(product_id=product_id))
-        order_item = await session.execute(
-            insert(OrderItem).values(product_id=product_id, quantity=quantity)
+        new_order = await session.execute(
+            insert(Order).values(status=model.status).returning(Order.id)
         )
-        return True
+
+        new_order_id = new_order.scalar_one()
+
+        for item in model.items:
+
+            result = await session.execute(
+                select(Product).where(Product.id == item.product_id)
+            )
+            product = result.scalar_one_or_none()
+
+            if product is None:
+                raise ValueError(f"Product with ID {item.product_id} not found")
+
+            requested_quantity = item.stock
+            available_stock = product.stock
+
+            if requested_quantity > available_stock:
+                raise ValueError(
+                    f"Requested quantity ({requested_quantity}) exceeds available stock ({available_stock}) for product {item.product_id}"
+                )
+
+            await session.execute(
+                update(Product)
+                .where(Product.id == item.product_id)
+                .values(stock=available_stock - requested_quantity)
+            )
+
+            await session.execute(
+                insert(OrderItem).values(
+                    order_id=new_order_id,
+                    product_id=item.product_id,
+                    quantity=requested_quantity,
+                )
+            )
+
+        await session.commit()
+
+        return {"message": "Order created successfully", "order_id": new_order_id}
+
+    except NoResultFound:
+        await session.rollback()
+        return {"message": "Product not found"}
+
     except Exception as e:
-        return False
+        await session.rollback()
+        return {"message": f"Order creation failed: {e}"}
 
 
 async def get_orders(session: db_session):
