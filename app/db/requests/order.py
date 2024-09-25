@@ -61,6 +61,7 @@ async def create_order(session: db_session, model: OrderCreate) -> dict:
         return {"error": f"Order creation failed: {e}"}
 
 
+
 async def get_orders(session: db_session) -> dict:
     try:
         result = await session.execute(
